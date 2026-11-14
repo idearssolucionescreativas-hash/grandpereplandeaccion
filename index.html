@@ -1,0 +1,439 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Formularios Grand-Père</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: encabezado con la prueba A/B/C, luego una franja por formulario (vista de celular a la izquierda, configuración a la derecha) y cierre con calificación y pendientes */
+:root{
+  --bg:#F6F7F1; --surface:#FFFFFF; --crema:#E9EDDC; --fg:#2E2E2E; --muted:#5E6356;
+  --salvia:#A3B18A; --salvia-osc:#5F6F4A; --cobre:#B9875A; --line:#D9DDCB;
+  --a:#3B6E3A; --a-bg:#DCEBD3; --b:#8A6A1F; --b-bg:#F4E7C6; --c:#6B6F78; --c-bg:#E6E8EC; --d:#9A3B2E; --d-bg:#F2D9D3;
+  --dato-bg:#F6E3C8; --dato-fg:#7A4E1C; --phone:#2E2E2E;
+  --display:"Montserrat", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1C1E19; --surface:#25281F; --crema:#2F3427; --fg:#ECEEE4; --muted:#B3B8A6;
+  --salvia:#A3B18A; --salvia-osc:#B7C49D; --cobre:#D3A577; --line:#3A3F31;
+  --a:#9FD39A; --a-bg:#24361F; --b:#E6C46F; --b-bg:#3A3220; --c:#B9BDC6; --c-bg:#30333A; --d:#EE9C8E; --d-bg:#3D2420;
+  --dato-bg:#4A3820; --dato-fg:#F2CB98; --phone:#0F100D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1C1E19; --surface:#25281F; --crema:#2F3427; --fg:#ECEEE4; --muted:#B3B8A6;
+  --salvia:#A3B18A; --salvia-osc:#B7C49D; --cobre:#D3A577; --line:#3A3F31;
+  --a:#9FD39A; --a-bg:#24361F; --b:#E6C46F; --b-bg:#3A3220; --c:#B9BDC6; --c-bg:#30333A; --d:#EE9C8E; --d-bg:#3D2420;
+  --dato-bg:#4A3820; --dato-fg:#F2CB98; --phone:#0F100D; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:32px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(26px,4vw,38px);font-weight:800}
+h2{font-size:clamp(21px,2.6vw,27px);font-weight:700}
+h3{font-size:16px;font-weight:700}
+h4{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--salvia-osc)}
+p{margin:0}
+.eyebrow{font-family:var(--display);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cobre)}
+.lead{max-width:68ch;color:var(--muted);font-size:16px}
+header{display:grid;gap:14px}
+.dato{background:var(--dato-bg);color:var(--dato-fg);border-radius:4px;padding:0 5px;font-weight:600;white-space:nowrap}
+
+/* comparativo */
+.abc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.abc article{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:8px;align-content:start}
+.abc .tag{font-family:var(--display);font-weight:800;font-size:13px;color:var(--salvia-osc)}
+.abc dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin:4px 0 0;font-size:13.5px}
+.abc dt{color:var(--muted)}
+.abc dd{margin:0;font-weight:500}
+.test{background:var(--crema);border-radius:10px;padding:18px 20px;display:grid;gap:10px}
+.test ul{margin:0;padding-left:18px;display:grid;gap:4px}
+
+/* formularios */
+.form{display:grid;grid-template-columns:300px minmax(0,1fr);gap:32px;padding-top:32px;border-top:2px solid var(--line)}
+.form-head{grid-column:1/-1;display:grid;gap:6px}
+.form-head .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--crema);color:var(--fg)}
+.chip.cobre{background:var(--cobre);color:#fff}
+.phone{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);align-self:start;background:var(--phone);border-radius:34px;padding:12px;box-shadow:0 18px 40px -22px rgba(0,0,0,.45);max-width:300px;width:100%}
+.screen{background:#FFFFFF;color:#1C1E21;border-radius:24px;overflow:hidden;font-family:"Segoe UI",Helvetica,Arial,sans-serif;font-size:13px}
+.screen .img{height:120px;background:linear-gradient(160deg,#C9D3B4,#A3B18A 55%,#7E8D66);display:flex;align-items:flex-end;padding:10px;color:#fff;font-size:10.5px}
+.screen .page{display:flex;align-items:center;gap:8px;padding:10px 14px 0}
+.screen .logo{width:30px;height:30px;border-radius:50%;background:#2E2E2E;color:#A3B18A;display:grid;place-items:center;font-weight:800;font-size:11px;font-family:var(--display)}
+.screen .pname{font-weight:600;font-size:12.5px}
+.screen .body{padding:10px 14px 16px;display:grid;gap:8px}
+.screen .hl{font-size:16px;font-weight:700;line-height:1.25}
+.screen .desc{color:#4B4F56;font-size:12.5px;line-height:1.45}
+.screen .desc ul{margin:0;padding-left:16px}
+.screen .btn{background:#1877F2;color:#fff;text-align:center;border-radius:6px;padding:9px;font-weight:600;margin-top:4px}
+.screen .fine{font-size:10.5px;color:#65676B}
+.screen .dato{background:#FCEBD3;color:#7A4E1C}
+
+.spec{display:grid;gap:22px;min-width:0}
+.block{display:grid;gap:8px}
+.copy{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;padding-right:86px;font-size:14.5px;white-space:pre-line}
+.copy button{position:absolute;top:8px;right:8px;font:600 12px var(--body);border:1px solid var(--line);background:var(--crema);color:var(--fg);border-radius:6px;padding:4px 10px;cursor:pointer}
+.copy button:focus-visible,.tabs button:focus-visible{outline:2px solid var(--cobre);outline-offset:2px}
+.limit{font-size:12px;color:var(--muted)}
+ol.q{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:q}
+ol.q>li{counter-increment:q;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:6px}
+ol.q>li .qt{font-weight:600;display:flex;gap:8px}
+ol.q>li .qt::before{content:"P" counter(q);font-family:var(--display);font-size:12px;font-weight:800;color:var(--cobre);padding-top:2px}
+ol.q .why{font-size:13px;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{font-size:13px;border:1px solid var(--line);border-radius:6px;padding:3px 9px;background:var(--bg)}
+.opt.a{border-color:var(--a);background:var(--a-bg);color:var(--a)}
+.opt.b{border-color:var(--b);background:var(--b-bg);color:var(--b)}
+.opt.c{border-color:var(--c);background:var(--c-bg);color:var(--c)}
+.opt.d{border-color:var(--d);background:var(--d-bg);color:var(--d)}
+.cond{font-size:12px;font-weight:700;color:var(--salvia-osc);text-transform:uppercase;letter-spacing:.06em}
+.contact{display:flex;flex-wrap:wrap;gap:6px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--muted);align-items:center}
+
+/* tablas */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:var(--crema)}
+tr:last-child td{border-bottom:0}
+.lvl{font-family:var(--display);font-weight:800;padding:2px 9px;border-radius:999px;font-size:12px;white-space:nowrap}
+.lvl.a{background:var(--a-bg);color:var(--a)} .lvl.b{background:var(--b-bg);color:var(--b)} .lvl.c{background:var(--c-bg);color:var(--c)} .lvl.d{background:var(--d-bg);color:var(--d)}
+section{display:grid;gap:16px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:10px;align-content:start}
+.card ul,.card ol{margin:0;padding-left:18px;display:grid;gap:6px}
+.check li{list-style:none;margin-left:-18px;display:flex;gap:8px}
+.check li::before{content:"";flex:0 0 14px;height:14px;margin-top:4px;border:2px solid var(--cobre);border-radius:3px}
+footer{font-size:13px;color:var(--muted)}
+@media (max-width:860px){
+  .abc{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .phone{position:static;margin:0 auto}
+  .two{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">Casa Grand-Père · Meta Ads · Clientes potenciales</span>
+  <h1>Tres formularios instantáneos para la prueba A/B/C</h1>
+  <p class="lead">Objetivo: ocupar los cupos de estadía permanente con familias que de verdad pueden avanzar. Los tres formularios tienen solo 4 preguntas de opción múltiple más nombre y WhatsApp, filtran por momento y presupuesto, y terminan en WhatsApp. Lo que está marcado como <span class="dato">dato</span> se completa con Casa Grand-Père antes de publicar.</p>
+</header>
+
+<section aria-labelledby="t-abc">
+  <h2 id="t-abc">Qué prueba cada formulario</h2>
+  <div class="abc">
+    <article>
+      <span class="tag">FORMULARIO A</span>
+      <h3>Tranquilidad para la familia</h3>
+      <p>Habla del alivio de saber que su familiar está acompañado y muestra el precio desde el principio.</p>
+      <dl><dt>Servicio</dt><dd>Estadía permanente</dd><dt>Ángulo</dt><dd>Confianza + transparencia</dd><dt>Hipótesis</dt><dd>Menos formularios, mejor calidad: quien llega ya vio el precio</dd></dl>
+    </article>
+    <article>
+      <span class="tag">FORMULARIO B</span>
+      <h3>Así se cuida aquí</h3>
+      <p>Muestra la experiencia de cuidado del día a día: equipo, terapias, actividades y contacto con la familia.</p>
+      <dl><dt>Servicio</dt><dd>Estadía permanente</dd><dt>Ángulo</dt><dd>Beneficios + emoción</dd><dt>Hipótesis</dt><dd>Más formularios; revela qué valora más la familia</dd></dl>
+    </article>
+    <article>
+      <span class="tag">FORMULARIO C</span>
+      <h3>¿Permanente o centro día?</h3>
+      <p>Ayuda a la familia a elegir y separa a quien necesita estadía permanente de quien busca cuidado de día.</p>
+      <dl><dt>Servicio</dt><dd>Permanente + centro día 8 h</dd><dt>Ángulo</dt><dd>Orientación + segmentación</dd><dt>Hipótesis</dt><dd>Capta a indecisos y mide la demanda real del centro día</dd></dl>
+    </article>
+  </div>
+  <div class="test">
+    <h3>Cómo montar la prueba</h3>
+    <ul>
+      <li><strong>Una campaña</strong> con objetivo Clientes potenciales y <strong>3 conjuntos de anuncios</strong>, uno por formulario. Mismo público, misma ubicación (Envigado, Sabaneta, Itagüí y Medellín) y mismo presupuesto en los tres.</li>
+      <li><strong>Presupuesto:</strong> $5.000 diarios por conjunto ($15.000 en total), en reemplazo de la campaña de testing actual. Así se respeta el tope de $35.000 diarios y la campaña escalada de WhatsApp no se toca.</li>
+      <li><strong>Creativo:</strong> el mismo video o foto real de la casa en los tres conjuntos, para que lo único que cambie sea el formulario. El texto del anuncio repite la idea del formulario.</li>
+      <li><strong>Duración:</strong> 14 días sin cambios. Gana el formulario con el <strong>menor costo por visita guiada agendada</strong>; si hay pocas visitas, el de menor costo por prospecto A.</li>
+      <li><strong>Tipo de formulario:</strong> «Mayor intención» en los tres. Agrega una pantalla para revisar los datos antes de enviar y reduce los registros por error.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="legend" aria-label="Leyenda de colores de las respuestas">
+  <strong>Las respuestas califican al prospecto:</strong>
+  <span class="opt a">A · caliente</span><span class="opt b">B · tibio</span><span class="opt c">C · frío</span><span class="opt d">D · descartar</span>
+</div>
+
+<!-- ============ FORMULARIO A ============ -->
+<article class="form" id="form-a">
+  <div class="form-head">
+    <span class="eyebrow">Formulario A · Estadía permanente</span>
+    <h2>Tranquilidad para la familia</h2>
+    <div class="meta"><span class="chip">Nombre interno: GP_A_Tranquilidad_Permanente</span><span class="chip">Mayor intención</span><span class="chip cobre">Prioridad: permanente</span></div>
+  </div>
+
+  <div class="phone" aria-hidden="true"><div class="screen">
+    <div class="img">Foto real: habitación o zona común con luz natural</div>
+    <div class="page"><div class="logo">GP</div><div class="pname">Casa Grand-Père</div></div>
+    <div class="body">
+      <div class="hl">Su familiar acompañado. Usted, tranquilo.</div>
+      <div class="desc">Estadía permanente en Envigado con enfermería las 24 horas, médico, terapias y alimentación. Hoy hay 4 cupos en habitación compartida, desde <span class="dato">$3.500.000</span>* al mes.</div>
+      <div class="fine">*Tarifa 2026, sujeta a ajuste de año nuevo.</div>
+      <div class="btn">Continuar</div>
+    </div>
+  </div></div>
+
+  <div class="spec">
+    <div class="block">
+      <h4>Encabezado</h4>
+      <div class="copy"><button type="button">Copiar</button>Su familiar acompañado. Usted, tranquilo.</div>
+      <span class="limit">41 de 60 caracteres</span>
+    </div>
+    <div class="block">
+      <h4>Descripción (párrafo)</h4>
+      <div class="copy"><button type="button">Copiar</button>Estadía permanente en Envigado con enfermería las 24 horas, médico, terapias y alimentación. Hoy hay 4 cupos en habitación compartida, desde $[precio]* al mes.
+Déjenos sus datos y le contamos todo por WhatsApp, sin compromiso.
+*Tarifa 2026, sujeta a ajuste de año nuevo. Hojas de vida: solo al correo [correo].</div>
+    </div>
+    <div class="block">
+      <h4>Preguntas de necesidad y calificación</h4>
+      <ol class="q">
+        <li><span class="qt">¿Para quién busca la estadía?</span>
+          <div class="opts"><span class="opt">Mi mamá</span><span class="opt">Mi papá</span><span class="opt">Mi pareja</span><span class="opt">Otro familiar</span></div>
+          <span class="why">Personaliza el primer mensaje de WhatsApp («¿Cómo está su mamá?»).</span></li>
+        <li><span class="qt">¿Para cuándo necesita el servicio?</span>
+          <div class="opts"><span class="opt a">Esta semana</span><span class="opt a">Este mes</span><span class="opt b">En 1 a 3 meses</span><span class="opt c">Solo estoy averiguando</span></div>
+          <span class="why">Mide la urgencia. Es la pregunta que más pesa en la calificación.</span></li>
+        <li><span class="qt">La estadía en habitación compartida tiene un valor desde $[precio]* al mes. ¿Está dentro de lo que su familia tiene previsto?</span>
+          <div class="opts"><span class="opt a">Sí</span><span class="opt b">Sí, si conozco qué incluye</span><span class="opt c">No por ahora</span></div>
+          <span class="why">Filtra el 25 % de mensajes sin presupuesto sin preguntar cuánto ganan.</span></li>
+        <li><span class="qt">¿Le gustaría conocer la casa en una visita guiada gratis?</span>
+          <div class="opts"><span class="opt a">Sí, entre semana</span><span class="opt a">Sí, el sábado</span><span class="opt b">Prefiero que me llamen primero</span></div>
+          <span class="why">Pide el siguiente paso dentro del formulario. Si deciden en familia, el asesor los invita a todos a la visita.</span></li>
+      </ol>
+      <span class="limit">4 preguntas: para quién (personaliza), cuándo (urgencia), precio (capacidad de pago) y visita (compromiso). Quién decide y el municipio se preguntan por WhatsApp.</span>
+    </div>
+    <div class="block">
+      <h4>Datos de contacto (precargados por Meta)</h4>
+      <div class="contact"><span class="opt">Nombre completo</span><span class="opt">Número de teléfono (WhatsApp)</span></div>
+      <span class="limit">No pedir correo: suma fricción y el seguimiento es por WhatsApp.</span>
+    </div>
+    <div class="block">
+      <h4>Pantalla de agradecimiento</h4>
+      <div class="copy"><button type="button">Copiar</button>Gracias. Ya tenemos su solicitud.
+En las próximas [2 horas hábiles] le escribimos por WhatsApp desde el [número] para coordinar su visita guiada. Si prefiere, escríbanos ahora y le respondemos de inmediato.</div>
+      <div class="copy"><button type="button">Copiar</button>Botón: Escribir por WhatsApp
+Enlace: https://wa.me/57[número]?text=Hola,%20acabo%20de%20llenar%20el%20formulario%20de%20estad%C3%ADa%20permanente</div>
+    </div>
+  </div>
+</article>
+
+<!-- ============ FORMULARIO B ============ -->
+<article class="form" id="form-b">
+  <div class="form-head">
+    <span class="eyebrow">Formulario B · Estadía permanente</span>
+    <h2>Así se cuida aquí</h2>
+    <div class="meta"><span class="chip">Nombre interno: GP_B_Experiencia_Permanente</span><span class="chip">Mayor intención</span><span class="chip cobre">Prioridad: permanente</span></div>
+  </div>
+
+  <div class="phone" aria-hidden="true"><div class="screen">
+    <div class="img">Foto real: actividad en grupo o huerta, con autorización</div>
+    <div class="page"><div class="logo">GP</div><div class="pname">Casa Grand-Père</div></div>
+    <div class="body">
+      <div class="hl">Así se vive un día en Casa Grand-Père</div>
+      <div class="desc"><ul><li>Enfermería las 24 horas y seguimiento médico</li><li>Fisioterapia, terapia ocupacional y psicología</li><li>Alimentación guiada por nutricionista</li><li>Música, huerta y gimnasia adaptada</li><li>Videollamadas y reportes para la familia</li></ul></div>
+      <div class="btn">Continuar</div>
+    </div>
+  </div></div>
+
+  <div class="spec">
+    <div class="block">
+      <h4>Encabezado</h4>
+      <div class="copy"><button type="button">Copiar</button>Así se vive un día en Casa Grand-Père</div>
+      <span class="limit">37 de 60 caracteres</span>
+    </div>
+    <div class="block">
+      <h4>Descripción (lista)</h4>
+      <div class="copy"><button type="button">Copiar</button>Enfermería las 24 horas y seguimiento médico
+Fisioterapia, terapia ocupacional y psicología
+Alimentación guiada por nutricionista
+Música, huerta y gimnasia adaptada cada semana
+Videollamadas y reportes para que la familia sepa cómo está</div>
+      <div class="copy"><button type="button">Copiar</button>Texto bajo la lista: Estadía permanente en Envigado desde $[precio]* al mes. Conózcala en una visita guiada gratis.
+*Tarifa 2026, sujeta a ajuste de año nuevo. Hojas de vida: solo al correo [correo].</div>
+    </div>
+    <div class="block">
+      <h4>Preguntas de necesidad y calificación</h4>
+      <ol class="q">
+        <li><span class="qt">¿Qué es lo más importante para usted al elegir?</span>
+          <div class="opts"><span class="opt">Que esté seguro de día y de noche</span><span class="opt">Que tenga compañía y actividades</span><span class="opt">Su alimentación y sus terapias</span><span class="opt">Saber cada día cómo está</span></div>
+          <span class="why">Es la pregunta propia de este formulario: le dice al asesor por dónde empezar la conversación y alimenta el contenido.</span></li>
+        <li><span class="qt">¿Para cuándo necesita el servicio?</span>
+          <div class="opts"><span class="opt a">Esta semana</span><span class="opt a">Este mes</span><span class="opt b">En 1 a 3 meses</span><span class="opt c">Solo estoy averiguando</span></div></li>
+        <li><span class="qt">La estadía permanente tiene un valor desde $[precio]* al mes. ¿Está dentro de lo que su familia tiene previsto?</span>
+          <div class="opts"><span class="opt a">Sí</span><span class="opt b">Sí, si conozco qué incluye</span><span class="opt c">No por ahora</span></div></li>
+        <li><span class="qt">¿Le gustaría conocer la casa en una visita guiada gratis?</span>
+          <div class="opts"><span class="opt a">Sí, entre semana</span><span class="opt a">Sí, el sábado</span><span class="opt b">Prefiero que me llamen primero</span></div></li>
+      </ol>
+      <span class="limit">4 preguntas: qué valora (el ángulo de este formulario), cuándo, precio y visita. Cómo se organiza hoy el cuidado se conversa por WhatsApp.</span>
+    </div>
+    <div class="block">
+      <h4>Datos de contacto (precargados por Meta)</h4>
+      <div class="contact"><span class="opt">Nombre completo</span><span class="opt">Número de teléfono (WhatsApp)</span></div>
+    </div>
+    <div class="block">
+      <h4>Pantalla de agradecimiento</h4>
+      <div class="copy"><button type="button">Copiar</button>Gracias. Le esperamos en casa.
+En las próximas [2 horas hábiles] le escribimos por WhatsApp para agendar su visita guiada. Así conoce al equipo y los espacios antes de decidir.</div>
+      <div class="copy"><button type="button">Copiar</button>Botón: Escribir por WhatsApp
+Enlace: https://wa.me/57[número]?text=Hola,%20quiero%20agendar%20una%20visita%20guiada</div>
+    </div>
+  </div>
+</article>
+
+<!-- ============ FORMULARIO C ============ -->
+<article class="form" id="form-c">
+  <div class="form-head">
+    <span class="eyebrow">Formulario C · Permanente y centro día</span>
+    <h2>¿Estadía permanente o centro día?</h2>
+    <div class="meta"><span class="chip">Nombre interno: GP_C_Segmentacion</span><span class="chip">Mayor intención</span><span class="chip">Con lógica condicional</span></div>
+  </div>
+
+  <div class="phone" aria-hidden="true"><div class="screen">
+    <div class="img">Foto real: fachada o jardín de la casa</div>
+    <div class="page"><div class="logo">GP</div><div class="pname">Casa Grand-Père</div></div>
+    <div class="body">
+      <div class="hl">¿Estadía permanente o centro día? Le orientamos</div>
+      <div class="desc">Dos formas de acompañar a su familiar en Envigado:<br>• Estadía permanente: vive con nosotros, con enfermería las 24 horas. Desde <span class="dato">$3.500.000</span>*/mes.<br>• Centro día: 8 horas de actividades y cuidado, y regresa a casa. Desde <span class="dato">$[precio]</span>*/mes.</div>
+      <div class="btn">Continuar</div>
+    </div>
+  </div></div>
+
+  <div class="spec">
+    <div class="block">
+      <h4>Encabezado</h4>
+      <div class="copy"><button type="button">Copiar</button>¿Estadía permanente o centro día? Le orientamos</div>
+      <span class="limit">48 de 60 caracteres</span>
+    </div>
+    <div class="block">
+      <h4>Descripción (párrafo)</h4>
+      <div class="copy"><button type="button">Copiar</button>Dos formas de acompañar a su familiar en Envigado:
+• Estadía permanente: vive con nosotros, con enfermería las 24 horas. Desde $[precio permanente]* al mes.
+• Centro día: 8 horas de actividades y cuidado, y regresa a casa en la tarde. Desde $[precio centro día]* al mes.
+Responda 4 preguntas y le recomendamos la opción adecuada.
+*Tarifa 2026, sujeta a ajuste de año nuevo. Hojas de vida: solo al correo [correo].</div>
+    </div>
+    <div class="block">
+      <h4>Preguntas con lógica condicional</h4>
+      <ol class="q">
+        <li><span class="qt">¿Qué necesita hoy su familia?</span>
+          <div class="opts"><span class="opt a">Que viva acompañado, con cuidado de día y de noche</span><span class="opt b">Que tenga compañía y actividades de día y vuelva a casa</span><span class="opt c">Todavía no lo tengo claro</span></div>
+          <span class="why">Separa los dos servicios desde la primera respuesta.</span></li>
+        <li><span class="qt">¿Para cuándo lo necesita?</span>
+          <div class="opts"><span class="opt a">Esta semana</span><span class="opt a">Este mes</span><span class="opt b">En 1 a 3 meses</span><span class="opt c">Solo estoy averiguando</span></div></li>
+        <li><span class="cond">Si eligió estadía permanente</span><span class="qt">¿Qué presupuesto mensual tiene previsto?</span>
+          <div class="opts"><span class="opt c">Menos de $3.000.000</span><span class="opt a">$3.000.000 a $4.000.000</span><span class="opt a">$4.000.000 a $5.000.000</span><span class="opt a">Más de $5.000.000</span></div>
+          <span class="why">Rangos alrededor de la tarifa de referencia (compartida ≈ $3,5 M, individual $4,5–4,7 M, según el acta del 9 oct). Ajustarlos con el precio confirmado.</span>
+          <span class="cond">Si eligió centro día</span><span class="qt">¿Cuántos días a la semana lo necesitaría?</span>
+          <div class="opts"><span class="opt c">1 o 2 días</span><span class="opt b">3 o 4 días</span><span class="opt a">De lunes a viernes</span></div>
+          <span class="why">Solo esta pregunta cambia según la respuesta 1. Así cada familia responde 4 preguntas.</span></li>
+        <li><span class="qt">¿Cuál sería el mejor primer paso?</span>
+          <div class="opts"><span class="opt a">Una visita guiada gratis</span><span class="opt a">Un día de prueba en el centro día</span><span class="opt b">Que me llamen para orientarme</span></div></li>
+      </ol>
+      <span class="limit">Si la cuenta no muestra la lógica condicional, la pregunta 3 queda igual para todos: «Los valores van desde $[precio permanente]* (estadía) y $[precio centro día]* (centro día) al mes. ¿Está dentro de lo previsto?» con Sí / Sí, si conozco qué incluye / No por ahora.</span>
+    </div>
+    <div class="block">
+      <h4>Datos de contacto (precargados por Meta)</h4>
+      <div class="contact"><span class="opt">Nombre completo</span><span class="opt">Número de teléfono (WhatsApp)</span></div>
+    </div>
+    <div class="block">
+      <h4>Pantalla de agradecimiento</h4>
+      <div class="copy"><button type="button">Copiar</button>Gracias. Ya sabemos qué necesita su familia.
+En las próximas [2 horas hábiles] le escribimos por WhatsApp con la opción que mejor se ajusta y para coordinar su visita o su día de prueba.</div>
+      <div class="copy"><button type="button">Copiar</button>Botón: Escribir por WhatsApp
+Enlace: https://wa.me/57[número]?text=Hola,%20quiero%20que%20me%20orienten%20sobre%20estad%C3%ADa%20permanente%20o%20centro%20d%C3%ADa</div>
+    </div>
+  </div>
+</article>
+
+<section aria-labelledby="t-cal">
+  <h2 id="t-cal">Cómo calificar y atender cada prospecto</h2>
+  <p class="lead">Los prospectos se descargan del Centro de clientes potenciales de Meta, o se conectan a una hoja de Google, con una columna de calificación. Casi nadie responde al primer mensaje: el seguimiento es parte del proceso.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Nivel</th><th>Cómo se reconoce</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td><span class="lvl a">A · Caliente</span></td><td>Estadía permanente, para esta semana o este mes, presupuesto «Sí» o de $3 M en adelante, y pide visita</td><td>WhatsApp y llamada en menos de 1 hora. Ofrecer dos horarios de visita esta misma semana</td></tr>
+      <tr><td><span class="lvl b">B · Tibio</span></td><td>Permanente en 1 a 3 meses, «Sí, si conozco qué incluye», centro día de 3 días o más, o «Prefiero que me llamen»</td><td>WhatsApp el mismo día con qué incluye el servicio y la invitación a la visita o al día de prueba</td></tr>
+      <tr><td><span class="lvl c">C · Frío</span></td><td>«Solo estoy averiguando», «No por ahora» o menos de $3 M</td><td>Lista de interesados para cuando se libere un cupo. Un mensaje útil a los 15 días, sin presión</td></tr>
+      <tr><td><span class="lvl d">D · Descartar</span></td><td>Datos falsos, número equivocado o busca empleo</td><td>Si busca empleo, responder con el correo de hojas de vida</td></tr>
+    </tbody>
+  </table></div>
+  <div class="two">
+    <div class="card">
+      <h3>Seguimiento por WhatsApp</h3>
+      <ol>
+        <li><strong>Día 0:</strong> mensaje personalizado con el nombre y el familiar («¿Cómo está su mamá?»), más una llamada si es A.</li>
+        <li><strong>Día 1:</strong> qué incluye la estadía y fotos reales de la casa.</li>
+        <li><strong>Día 3:</strong> invitación concreta a la visita guiada con dos horarios.</li>
+        <li><strong>Día 7:</strong> último mensaje: «Si más adelante lo necesita, aquí estamos».</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Qué comparar a los 14 días</h3>
+      <ul>
+        <li>Costo por prospecto de cada formulario</li>
+        <li>Porcentaje de prospectos A y B sobre el total</li>
+        <li>Porcentaje que responde el primer WhatsApp</li>
+        <li>Visitas guiadas agendadas y realizadas</li>
+        <li><strong>Costo por visita agendada</strong>: decide al ganador</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="t-pend">
+  <h2 id="t-pend">Antes de publicar</h2>
+  <div class="two">
+    <div class="card">
+      <h3>Datos que debe confirmar Casa Grand-Père</h3>
+      <ul class="check">
+        <li>Precio exacto «desde» de la estadía permanente y el texto del asterisco</li>
+        <li>Precio «desde» del centro día (sin él no se publica el formulario C)</li>
+        <li>Si son 4 habitaciones o 4 cupos (camas) disponibles</li>
+        <li>Correo para hojas de vida</li>
+        <li>Número de WhatsApp, quién responde y en cuánto tiempo</li>
+        <li>Alcance de la enfermería 24 horas tal como se va a anunciar</li>
+        <li>Fotos reales de la casa y autorización si aparecen residentes</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Configuración en Meta</h3>
+      <ul class="check">
+        <li><strong>Política de privacidad:</strong> Meta exige una URL en todos los formularios. Hay que tenerla publicada antes de crearlos</li>
+        <li>Botón de WhatsApp al final: si la cuenta no ofrece «Enviar mensaje por WhatsApp», usar «Ver sitio web» con el enlace wa.me</li>
+        <li>Conectar los prospectos a una hoja de Google o descargarlos a diario</li>
+        <li>Público por ubicación y edad, sin intereses de salud</li>
+        <li>Ninguna pregunta sobre diagnósticos o condiciones de salud: lo prohíben las políticas de Meta y la marca. El estado de salud se conoce en la visita</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>IDEAR Marketing Digital · Propuesta para Casa Grand-Père · Noviembre de 2026</footer>
+</div>
+
+<script>
+document.querySelectorAll('.copy button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var box = btn.parentElement;
+    var text = Array.prototype.filter.call(box.childNodes, function (n) { return n !== btn; })
+      .map(function (n) { return n.textContent; }).join('').trim();
+    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1500); };
+    var fallback = function () {
+      var r = document.createRange(); r.selectNodeContents(box);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = 'Seleccionado';
+    };
+    try {
+      navigator.clipboard.writeText(text).then(done, fallback);
+    } catch (e) { fallback(); }
+  });
+});
+</script>
+
+</body></html>
